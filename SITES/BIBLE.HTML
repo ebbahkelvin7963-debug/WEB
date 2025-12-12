@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIBLEBREAD - Meeting Bible</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .scripture {
+            font-size: 1.2em;
+            font-style: italic;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.95;
+        }
+
+        .scripture-ref {
+            margin-top: 10px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            min-height: 100px;
+            display: none;
+        }
+
+        .result-box.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .donation-section {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px;
+            margin-top: 40px;
+        }
+
+        .donation-section h2 {
+            color: #2d3436;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .donation-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .donation-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .donation-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.6);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .account-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .account-details h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .account-details p {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .account-details strong {
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .scripture {
+                font-size: 1em;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍞 BIBLEBREAD</h1>
+            <div class="scripture">
+                "When your words came, I ate them; they were my joy and my heart's delight, 
+                for I bear your name, LORD God Almighty."
+                <div class="scripture-ref">- Jeremiah 15:16</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Bible Translations Section -->
+            <div class="section">
+                <h2>📖 Bible Translations</h2>
+                <div class="grid-2">
+                    <div class="input-group">
+                        <label for="old-testament">Old Testament</label>
+                        <input type="text" id="old-testament" placeholder="Enter Old Testament passage">
+                    </div>
+                    <div class="input-group">
+                        <label for="new-testament">New Testament</label>
+                        <input type="text" id="new-testament" placeholder="Enter New Testament passage">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="translation">Select Translation</label>
+                    <select id="translation">
+                        <option value="">Choose a translation...</option>
+                        <option value="niv">NIV - New International Version</option>
+                        <option value="gw">GW - God's Word Translation</option>
+                        <option value="nlt">NLT - New Living Translation</option>
+                        <option value="kjv">KJV - King James Version</option>
+                        <option value="nkjv">NKJV - New King James Version</option>
+                        <option value="amp">AMP - Amplified Bible</option>
+                        <option value="ampc">AMPC - Amplified Bible Classic</option>
+                        <option value="msg">MSG - The Message</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="searchVerse()">Search Verse</button>
+                <div class="result-box" id="verse-result"></div>
+            </div>
+
+            <!-- Bible Names Section -->
+            <div class="section">
+                <h2>✨ Meaning of Bible Names</h2>
+                <div class="input-group">
+                    <label for="bible-name">Enter a Bible Name</label>
+                    <input type="text" id="bible-name" placeholder="e.g., David, Sarah, Abraham">
+                </div>
+                <button class="btn" onclick="searchName()">Find Meaning</button>
+                <div class="result-box" id="name-result"></div>
+            </div>
+
+            <!-- Daily Chapter Section -->
+            <div class="section">
+                <h2>🌟 Random Daily Chapter</h2>
+                <p style="margin-bottom: 20px; color: #666;">Discover a new scripture each day to feed your spirit.</p>
+                <button class="btn" onclick="getDailyChapter()">Get Daily Chapter</button>
+                <div class="result-box" id="daily-result"></div>
+            </div>
+
+            <!-- Donation Section -->
+            <div class="donation-section">
+                <div class="donation-icon">💝</div>
+                <h2>Support at Will</h2>
+                <p style="margin-bottom: 20px; color: #2d3436;">Your generous support helps us continue spreading God's Word</p>
+                <button class="donation-btn" onclick="showDonation()">Support Our Ministry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Modal -->
+    <div id="donationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDonation()">&times;</span>
+            <h2 style="color: #667eea; text-align: center; margin-bottom: 20px;">💝 Support BIBLEBREAD</h2>
+            
+            <div class="account-details">
+                <h3>💵 Dollar Donations (USD)</h3>
+                <p><strong>Account Name:</strong> Kelvin Ebbah</p>
+                <p><strong>Bank Name:</strong> Lead Bank</p>
+                <p><strong>Account Number:</strong> 216546035915</p>
+                <p><strong>Routing Number:</strong> 101019644</p>
+                <p><strong>Account Type:</strong> Personal Checking</p>
+                <p><strong>Bank Address:</strong> 9450 Southwest Gemini Drive, Beaverton, OR, 97008, USA</p>
+            </div>
+
+            <div class="account-details">
+                <h3>🇳🇬 Naira Donations (NGN)</h3>
+                <p><strong>Account Name:</strong> Kelvin Ebbah</p>
+                <p><strong>Account Number:</strong> 8147168382</p>
+                <p><strong>Bank:</strong> Opay</p>
+            </div>
+
+            <p style="text-align: center; margin-top: 20px; color: #666; font-style: italic;">
+                "God loves a cheerful giver" - 2 Corinthians 9:7
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const bibleBooks = [
+            'Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth',
+            '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra', 
+            'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs', 'Ecclesiastes', 'Song of Solomon',
+            'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos',
+            'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah',
+            'Malachi', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', '1 Corinthians',
+            '2 Corinthians', 'Galatians', 'Ephesians', 'Philippians', 'Colossians', '1 Thessalonians',
+            '2 Thessalonians', '1 Timothy', '2 Timothy', 'Titus', 'Philemon', 'Hebrews', 'James',
+            '1 Peter', '2 Peter', '1 John', '2 John', '3 John', 'Jude', 'Revelation'
+        ];
+
+        const bibleNames = {
+            'David': 'Beloved, dear one. A man after God\'s own heart, the second king of Israel.',
+            'Sarah': 'Princess, noblewoman. Wife of Abraham and mother of Isaac.',
+            'Abraham': 'Father of many nations. The founding patriarch of the Israelites.',
+            'Moses': 'Drawn out of water. The prophet who led Israel out of Egypt.',
+            'Mary': 'Bitter or beloved. Mother of Jesus Christ.',
+            'Jesus': 'The Lord saves. The Son of God and Savior of mankind.',
+            'Peter': 'Rock, stone. One of Jesus\' twelve apostles and leader of the early church.',
+            'Paul': 'Small, humble. Apostle to the Gentiles and author of many New Testament letters.',
+            'John': 'God is gracious. Apostle, author of Gospel of John and Revelation.',
+            'Ruth': 'Friend, companion. Faithful daughter-in-law and great-grandmother of David.',
+            'Esther': 'Star. Jewish queen who saved her people from destruction.',
+            'Daniel': 'God is my judge. Prophet known for his wisdom and faithfulness.',
+            'Joshua': 'The Lord is salvation. Led Israelites into the Promised Land.',
+            'Samuel': 'God has heard. Prophet and last judge of Israel.',
+            'Solomon': 'Peaceful. Wisest king of Israel, son of David.',
+            'Joseph': 'He will add. Son of Jacob, saved Egypt from famine.',
+            'Rebecca': 'To bind, captivating. Wife of Isaac, mother of Jacob and Esau.',
+            'Rachel': 'Ewe, innocent. Beloved wife of Jacob, mother of Joseph and Benjamin.',
+            'Elijah': 'The Lord is my God. Powerful prophet who confronted idol worship.',
+            'Isaiah': 'Salvation of the Lord. Major prophet who foretold the Messiah.'
+        };
+
+        function searchVerse() {
+            const oldTest = document.getElementById('old-testament').value;
+            const newTest = document.getElementById('new-testament').value;
+            const translation = document.getElementById('translation').value;
+            const resultBox = document.getElementById('verse-result');
+
+            if ((!oldTest && !newTest) || !translation) {
+                resultBox.innerHTML = '<p style="color: #e74c3c;">⚠️ Please enter a passage and select a translation.</p>';
+                resultBox.classList.add('active');
+                return;
+            }
+
+            const passage = oldTest || newTest;
+            const testament = oldTest ? 'Old Testament' : 'New Testament';
+            
+            resultBox.innerHTML = `
+                <h3 style="color: #667eea; margin-bottom: 10px;">📖 ${passage}</h3>
+                <p><strong>Testament:</strong> ${testament}</p>
+                <p><strong>Translation:</strong> ${translation.toUpperCase()}</p>
+                <p style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; line-height: 1.6;">
+                    This is a demonstration interface. To view the actual scripture text, this would connect to a Bible API service.
+                    You can integrate services like API.Bible or Bible Gateway API for real verse retrieval.
+                </p>
+            `;
+            resultBox.classList.add('active');
+        }
+
+        function searchName() {
+            const name = document.getElementById('bible-name').value.trim();
+            const resultBox = document.getElementById('name-result');
+
+            if (!name) {
+                resultBox.innerHTML = '<p style="color: #e74c3c;">⚠️ Please enter a Bible name.</p>';
+                resultBox.classList.add('active');
+                return;
+            }
+
+            const nameCapitalized = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+            const meaning = bibleNames[nameCapitalized];
+
+            if (meaning) {
+                resultBox.innerHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 10px;">✨ ${nameCapitalized}</h3>
+                    <p style="padding: 15px; background: white; border-radius: 8px; line-height: 1.6;">
+                        ${meaning}
+                    </p>
+                `;
+            } else {
+                resultBox.innerHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 10px;">✨ ${nameCapitalized}</h3>
+                    <p style="padding: 15px; background: white; border-radius: 8px;">
+                        The meaning for this name is not in our current database. Try names like David, Sarah, Abraham, Moses, or Mary.
+                    </p>
+                `;
+            }
+            resultBox.classList.add('active');
+        }
+
+        function getDailyChapter() {
+            const resultBox = document.getElementById('daily-result');
+            const randomBook = bibleBooks[Math.floor(Math.random() * bibleBooks.length)];
+            const randomChapter = Math.floor(Math.random() * 20) + 1;
+            
+            resultBox.innerHTML = `
+                <h3 style="color: #667eea; margin-bottom: 10px;">🌟 Today's Chapter</h3>
+                <p style="font-size: 1.3em; font-weight: 600; padding: 20px; background: white; border-radius: 8px; text-align: center;">
+                    ${randomBook} ${randomChapter}
+                </p>
+                <p style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; line-height: 1.6;">
+                    Take time to read and meditate on this chapter today. Let God's Word nourish your spirit like daily bread.
+                </p>
+            `;
+            resultBox.classList.add('active');
+        }
+
+        function showDonation() {
+            document.getElementById('donationModal').style.display = 'block';
+        }
+
+        function closeDonation() {
+            document.getElementById('donationModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('donationModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
